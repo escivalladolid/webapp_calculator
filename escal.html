@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌿 Pixel Calc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #d4f5d4;
+      --card:     #eafaea;
+      --display:  #c2ecc2;
+      --green1:   #86efac;
+      --green2:   #4ade80;
+      --green3:   #22c55e;
+      --op:       #bbf7d0;
+      --op-text:  #166534;
+      --eq:       #4ade80;
+      --eq-text:  #14532d;
+      --clear:    #fca5a5;
+      --del:      #fdba74;
+      --text:     #14532d;
+      --shadow:   #86efac;
+      --pixel:    4px;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle, #bbf7d088 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    /* floating bubbles */
+    .bubble {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.18;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) scale(1); opacity: 0.18; }
+      100% { transform: translateY(-120px) scale(1.1); opacity: 0; }
+    }
+
+    .title {
+      font-size: 10px;
+      color: var(--green3);
+      margin-bottom: 18px;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 #bbf7d0;
+    }
+
+    .calculator {
+      background: var(--card);
+      border: var(--pixel) solid var(--green2);
+      border-radius: 20px;
+      padding: 20px;
+      width: 300px;
+      box-shadow:
+        6px 6px 0 var(--green2),
+        10px 10px 0 #bbf7d066;
+      image-rendering: pixelated;
+    }
+
+    /* Display */
+    .display {
+      background: var(--display);
+      border: var(--pixel) solid var(--green2);
+      border-radius: 12px;
+      padding: 14px 16px 10px;
+      margin-bottom: 16px;
+      text-align: right;
+      box-shadow: inset 2px 2px 0 #fff8, 3px 3px 0 var(--green2);
+    }
+
+    .expression {
+      font-size: 7px;
+      color: #4ade8088;
+      min-height: 14px;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+
+    .result {
+      font-size: 22px;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.3;
+      text-shadow: 2px 2px 0 #bbf7d0;
+    }
+
+    /* Button grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    button {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      padding: 14px 0;
+      border: 3px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.08s;
+      position: relative;
+      outline: none;
+    }
+
+    /* Pixel shadow effect */
+    button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.12);
+      pointer-events: none;
+    }
+
+    button:active, button.active {
+      transform: translate(2px, 2px);
+      box-shadow: none !important;
+    }
+
+    /* Number buttons */
+    .btn-num {
+      background: #fff;
+      color: var(--text);
+      border-color: var(--green1);
+      box-shadow: 3px 3px 0 var(--green1);
+    }
+    .btn-num:hover { background: #f0fdf4; }
+    .btn-num.active {
+      background: var(--green1) !important;
+      border-color: var(--green2) !important;
+    }
+
+    /* Operator */
+    .btn-op {
+      background: var(--op);
+      color: var(--op-text);
+      border-color: var(--green2);
+      box-shadow: 3px 3px 0 var(--green2);
+    }
+    .btn-op:hover { background: #bbf7d0; }
+    .btn-op.active {
+      background: var(--green2) !important;
+    }
+
+    /* Clear */
+    .btn-clear {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #fca5a5;
+      box-shadow: 3px 3px 0 #fca5a5;
+    }
+    .btn-clear:hover { background: #fecaca; }
+    .btn-clear.active { background: #fca5a5 !important; }
+
+    /* Delete */
+    .btn-del {
+      background: #fff7ed;
+      color: #92400e;
+      border-color: var(--del);
+      box-shadow: 3px 3px 0 var(--del);
+    }
+    .btn-del:hover { background: #fed7aa; }
+    .btn-del.active { background: var(--del) !important; }
+
+    /* Equals */
+    .btn-eq {
+      background: var(--eq);
+      color: var(--eq-text);
+      border-color: var(--green3);
+      box-shadow: 3px 3px 0 var(--green3);
+      grid-column: span 2;
+      font-size: 14px;
+    }
+    .btn-eq:hover { background: #86efac; }
+    .btn-eq.active { background: var(--green3) !important; color: #fff !important; }
+
+    /* Zero */
+    .btn-zero { grid-column: span 2; }
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Floating bubbles -->
+  <script>
+    const colors = ['#86efac','#4ade80','#bbf7d0','#d1fae5','#6ee7b7'];
+    for (let i = 0; i < 12; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      const size = 20 + Math.random() * 50;
+      b.style.cssText = `
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        left:${Math.random()*100}vw;
+        animation-duration:${6+Math.random()*8}s;
+        animation-delay:${Math.random()*6}s;
+      `;
+      document.body.appendChild(b);
+    }
+  </script>
+
+  <div class="title">✿ ESCILOG CALC ✿</div>
+
+  <div class="calculator">
+    <div class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-clear" id="btn-c"   onclick="clearAll()">C</button>
+      <button class="btn-del"   id="btn-del" onclick="deleteLast()">⌫</button>
+      <button class="btn-op"    id="btn-%"   onclick="inputVal('%')">%</button>
+      <button class="btn-op"    id="btn-/"   onclick="inputVal('/')">÷</button>
+
+      <button class="btn-num" id="btn-7" onclick="inputVal('7')">7</button>
+      <button class="btn-num" id="btn-8" onclick="inputVal('8')">8</button>
+      <button class="btn-num" id="btn-9" onclick="inputVal('9')">9</button>
+      <button class="btn-op"  id="btn-*" onclick="inputVal('*')">×</button>
+
+      <button class="btn-num" id="btn-4" onclick="inputVal('4')">4</button>
+      <button class="btn-num" id="btn-5" onclick="inputVal('5')">5</button>
+      <button class="btn-num" id="btn-6" onclick="inputVal('6')">6</button>
+      <button class="btn-op"  id="btn--" onclick="inputVal('-')">−</button>
+
+      <button class="btn-num" id="btn-1" onclick="inputVal('1')">1</button>
+      <button class="btn-num" id="btn-2" onclick="inputVal('2')">2</button>
+      <button class="btn-num" id="btn-3" onclick="inputVal('3')">3</button>
+      <button class="btn-op"  id="btn-+" onclick="inputVal('+')">+</button>
+
+      <button class="btn-num btn-zero" id="btn-0" onclick="inputVal('0')">0</button>
+      <button class="btn-num" id="btn-." onclick="inputVal('.')">.</button>
+      <button class="btn-eq"  id="btn-=" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+
+
+  <script>
+    let current = '';
+
+    function inputVal(val) {
+      current += val;
+      document.getElementById('result').textContent = current;
+    }
+
+    function clearAll() {
+      current = '';
+      document.getElementById('result').textContent = '0';
+      document.getElementById('expression').textContent = '';
+    }
+
+    function deleteLast() {
+      current = current.slice(0, -1);
+      document.getElementById('result').textContent = current || '0';
+    }
+
+    function calculate() {
+      if (!current) return;
+      try {
+        const expression = current;
+        const answer = eval(expression);
+        document.getElementById('expression').textContent = expression + ' =';
+        document.getElementById('result').textContent = answer;
+        current = String(answer);
+      } catch (e) {
+        document.getElementById('result').textContent = 'Error';
+        current = '';
+      }
+    }
+
+    // Keyboard mapping to button IDs
+    const keyMap = {
+      '0': 'btn-0', '1': 'btn-1', '2': 'btn-2', '3': 'btn-3',
+      '4': 'btn-4', '5': 'btn-5', '6': 'btn-6', '7': 'btn-7',
+      '8': 'btn-8', '9': 'btn-9', '.': 'btn-.', '+': 'btn-+',
+      '-': 'btn--', '*': 'btn-*', '/': 'btn-/',  '%': 'btn-%',
+      'Enter': 'btn-=', '=': 'btn-=',
+      'Backspace': 'btn-del', 'Escape': 'btn-c', 'c': 'btn-c'
+    };
+
+    function flashButton(id) {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.classList.add('active');
+      setTimeout(() => btn.classList.remove('active'), 150);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const id = keyMap[e.key];
+      if (!id) return;
+      flashButton(id);
+
+      if (!isNaN(e.key) || ['+','-','*','/','.',('%')].includes(e.key)) inputVal(e.key);
+      else if (e.key === 'Enter' || e.key === '=') calculate();
+      else if (e.key === 'Backspace') deleteLast();
+      else if (e.key === 'Escape' || e.key === 'c') clearAll();
+    });
+  </script>
+
+</body>
+</html>
