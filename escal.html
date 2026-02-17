@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🌿 Pixel Calc</title>
+  <title> Calculator na Green </title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,7 +99,6 @@
       text-shadow: 2px 2px 0 #bbf7d0;
     }
 
-    /* Button grid */
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -118,7 +117,6 @@
       outline: none;
     }
 
-    /* Pixel shadow effect */
     button::after {
       content: '';
       position: absolute;
@@ -133,7 +131,7 @@
       box-shadow: none !important;
     }
 
-    /* Number buttons */
+    
     .btn-num {
       background: #fff;
       color: var(--text);
@@ -146,7 +144,7 @@
       border-color: var(--green2) !important;
     }
 
-    /* Operator */
+  
     .btn-op {
       background: var(--op);
       color: var(--op-text);
@@ -158,7 +156,7 @@
       background: var(--green2) !important;
     }
 
-    /* Clear */
+    
     .btn-clear {
       background: #fee2e2;
       color: #991b1b;
@@ -168,7 +166,7 @@
     .btn-clear:hover { background: #fecaca; }
     .btn-clear.active { background: #fca5a5 !important; }
 
-    /* Delete */
+    
     .btn-del {
       background: #fff7ed;
       color: #92400e;
@@ -178,7 +176,7 @@
     .btn-del:hover { background: #fed7aa; }
     .btn-del.active { background: var(--del) !important; }
 
-    /* Equals */
+    
     .btn-eq {
       background: var(--eq);
       color: var(--eq-text);
@@ -190,7 +188,7 @@
     .btn-eq:hover { background: #86efac; }
     .btn-eq.active { background: var(--green3) !important; color: #fff !important; }
 
-    /* Zero */
+    
     .btn-zero { grid-column: span 2; }
 
 
@@ -198,7 +196,7 @@
 </head>
 <body>
 
-  <!-- Floating bubbles -->
+  
   <script>
     const colors = ['#86efac','#4ade80','#bbf7d0','#d1fae5','#6ee7b7'];
     for (let i = 0; i < 12; i++) {
